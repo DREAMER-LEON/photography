@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>拾光集 — Leon 的摄影</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Noto+Serif+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAF8;
+    --surface: #FFFFFF;
+    --ink: #1A1A1F;
+    --ink-2: #6B6B70;
+    --ink-3: #A8A6A0;
+    --hair: #E8E6E2;
+    --hair-strong: #D8D5CF;
+    --serif: 'Fraunces', 'Noto Serif SC', Georgia, serif;
+    --serif-cn: 'Noto Serif SC', 'Fraunces', Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  img { display: block; max-width: 100%; }
+
+  ::selection { background: var(--ink); color: var(--bg); }
+
+  /* ---------- Nav ---------- */
+  .nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 40px;
+    background: rgba(250, 250, 248, 0.72);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.4s var(--ease), padding 0.4s var(--ease);
+  }
+  .nav.scrolled { border-bottom-color: var(--hair); padding: 16px 40px; }
+
+  .mark {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 19px;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    text-decoration: none;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .mark .cn { font-family: var(--serif-cn); font-weight: 500; }
+  .mark .dot { color: var(--ink-3); font-size: 14px; }
+
+  .nav-links { display: flex; gap: 28px; align-items: center; }
+  .nav-links a {
+    font-size: 13px;
+    color: var(--ink-2);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    transition: color 0.3s var(--ease);
+    position: relative;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-links .num {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    color: var(--ink-3);
+    margin-right: 6px;
+    font-size: 12px;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+    padding-top: 70px;
+  }
+  .hero-text {
+    padding: 0 6vw 0 8vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-right: 1px solid var(--hair);
+  }
+  .hero-eyebrow {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 14px;
+    color: var(--ink-3);
+    letter-spacing: 0.08em;
+    margin-bottom: 36px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .hero-eyebrow::after {
+    content: '';
+    flex: 0 0 56px;
+    height: 1px;
+    background: var(--hair-strong);
+  }
+  .hero-title {
+    font-family: var(--serif-cn);
+    font-weight: 300;
+    /* 竖排时字号会按字数放大整列高度，故同时用 vh 兜底，避免顶破屏高 */
+    font-size: clamp(34px, min(6vw, 7.6vh), 84px);
+    line-height: 1.7;         /* 竖排时 = 列与列之间的间距 */
+    letter-spacing: 0.1em;    /* 字与字之间的间距 */
+    color: var(--ink);
+    writing-mode: vertical-rl; /* 竖排，多列自右向左 */
+    text-orientation: mixed;
+    align-self: center;       /* 在左侧区域内水平居中 */
+    margin-bottom: 32px;
+  }
+  .hero-title .hero-line {
+    display: block;           /* 每句独立成列，列顶自动对齐 */
+  }
+  .hero-sub {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink-2);
+    max-width: 38ch;
+    margin-bottom: 44px;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 48px;
+    border-top: 1px solid var(--hair);
+    padding-top: 28px;
+  }
+  .hero-meta div { display: flex; flex-direction: column; gap: 4px; }
+  .hero-meta .k {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 12px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+  }
+  .hero-meta .v {
+    font-family: var(--serif-cn);
+    font-weight: 400;
+    font-size: 20px;
+    color: var(--ink);
+  }
+
+  .hero-image {
+    position: relative;
+    overflow: hidden;
+    background: #ECEAE5;
+  }
+  .hero-image img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: brightness(0.94) contrast(1.04);
+  }
+  .hero-image .caption {
+    position: absolute;
+    bottom: 28px;
+    right: 28px;
+    color: rgba(255,255,255,0.92);
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.4);
+    text-align: right;
+  }
+  .hero-image .caption .cn { font-family: var(--serif-cn); font-style: normal; display: block; font-size: 12px; opacity: 0.8; margin-top: 4px; }
+
+  /* ---------- Series ---------- */
+  .series {
+    padding: 120px 8vw 80px;
+    border-top: 1px solid var(--hair);
+  }
+  .series-head {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 60px;
+    align-items: end;
+    margin-bottom: 64px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--hair);
+  }
+  .series-num {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 80px;
+    line-height: 0.9;
+    color: var(--ink-3);
+    letter-spacing: -0.02em;
+  }
+  .series-title-block { padding-bottom: 8px; }
+  .series-label {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink-3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .series-title {
+    font-family: var(--serif-cn);
+    font-weight: 300;
+    font-size: clamp(36px, 5vw, 56px);
+    line-height: 1;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+  .series-desc {
+    font-size: 15px;
+    color: var(--ink-2);
+    max-width: 56ch;
+    line-height: 1.75;
+  }
+  .series-count {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+    margin-top: 8px;
+  }
+
+  /* ---------- Masonry grid ---------- */
+  .grid {
+    column-count: 3;
+    column-gap: 24px;
+  }
+  .grid.two { column-count: 2; }
+  @media (max-width: 900px) { .grid, .grid.two { column-count: 2; } }
+  @media (max-width: 600px) { .grid, .grid.two { column-count: 1; } }
+
+  .frame {
+    break-inside: avoid;
+    margin-bottom: 24px;
+    position: relative;
+    cursor: zoom-in;
+    overflow: hidden;
+    background: #ECEAE5;
+    border-radius: 2px;
+  }
+  .frame img {
+    width: 100%;
+    height: auto;
+    transition: transform 1.2s var(--ease), filter 0.6s var(--ease);
+  }
+  .frame:hover img { transform: scale(1.025); filter: brightness(0.97); }
+  .frame::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(26,26,31,0);
+    transition: border-color 0.4s var(--ease);
+    pointer-events: none;
+  }
+  .frame:hover::after { border-color: rgba(26,26,31,0.08); }
+  .frame .tag {
+    position: absolute;
+    left: 14px; bottom: 14px;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: #fff;
+    background: rgba(26,26,31,0.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 5px 11px;
+    border-radius: 100px;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
+  }
+  .frame:hover .tag { opacity: 1; transform: translateY(0); }
+
+  /* ---------- Reveal on scroll ---------- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 1s var(--ease), transform 1s var(--ease);
+  }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .frame img { transition: none; }
+    html { scroll-behavior: auto; }
+  }
+
+  /* ---------- Lightbox ---------- */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(250, 250, 248, 0.97);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.5s var(--ease);
+  }
+  .lightbox.open { display: flex; opacity: 1; }
+  .lb-stage {
+    position: relative;
+    max-width: 90vw;
+    max-height: 86vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .lb-stage img {
+    max-width: 90vw;
+    max-height: 86vh;
+    object-fit: contain;
+    box-shadow: 0 24px 80px rgba(26,26,31,0.18);
+    transition: opacity 0.4s var(--ease);
+  }
+  .lb-stage img.swap { opacity: 0; }
+
+  .lb-close {
+    position: absolute;
+    top: 28px; right: 32px;
+    background: none;
+    border: 1px solid var(--hair-strong);
+    border-radius: 100px;
+    padding: 9px 18px;
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--ink);
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    transition: background 0.3s var(--ease), color 0.3s var(--ease);
+  }
+  .lb-close:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+  .lb-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    border: 1px solid var(--hair-strong);
+    background: var(--surface);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s var(--ease), border-color 0.3s var(--ease);
+  }
+  .lb-nav:hover { background: var(--ink); border-color: var(--ink); }
+  .lb-nav:hover svg { stroke: var(--bg); }
+  .lb-nav svg { stroke: var(--ink); transition: stroke 0.3s var(--ease); }
+  .lb-prev { left: 32px; }
+  .lb-next { right: 32px; }
+
+  .lb-counter {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink-2);
+    letter-spacing: 0.06em;
+  }
+  .lb-counter .cur { color: var(--ink); }
+
+  /* ---------- Footer ---------- */
+  .footer {
+    border-top: 1px solid var(--hair);
+    padding: 80px 8vw 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: end;
+  }
+  .footer-mark {
+    font-family: var(--serif-cn);
+    font-weight: 300;
+    font-size: 32px;
+    color: var(--ink);
+    letter-spacing: 0.04em;
+  }
+  .footer-mark em {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--ink-3);
+    margin-left: 12px;
+  }
+  .footer-meta {
+    text-align: right;
+    font-size: 13px;
+    color: var(--ink-2);
+    line-height: 1.8;
+  }
+  .footer-meta .line { display: block; }
+  .footer-meta .muted { color: var(--ink-3); font-family: var(--serif); font-style: italic; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; padding-top: 64px; }
+    .hero-text { border-right: none; border-bottom: 1px solid var(--hair); padding: 80px 6vw; }
+    .hero-image { min-height: 60vh; }
+    .nav { padding: 16px 20px; }
+    .nav.scrolled { padding: 12px 20px; }
+    .nav-links { gap: 16px; }
+    .nav-links a { font-size: 12px; }
+    .nav-links .num { display: none; }
+    .series { padding: 80px 6vw 60px; }
+    .series-head { grid-template-columns: 1fr; gap: 24px; }
+    .series-num { font-size: 56px; }
+    .footer { grid-template-columns: 1fr; text-align: left; }
+    .footer-meta { text-align: left; }
+    .lb-prev { left: 12px; }
+    .lb-next { right: 12px; }
+    .lb-nav { width: 44px; height: 44px; }
+  }
+
+  @media (max-width: 600px) {
+    .hero-meta { gap: 28px; flex-wrap: wrap; }
+    .hero-title { font-size: 30px; }
+  }
+
+  /* ---------- Audio toggle ---------- */
+  .audio-btn {
+    position: fixed;
+    bottom: 28px;
+    left: 28px;
+    z-index: 60;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    border: 1px solid var(--hair-strong);
+    background: rgba(250,250,248,0.72);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s var(--ease), border-color 0.3s var(--ease);
+  }
+  .audio-btn:hover { background: var(--ink); border-color: var(--ink); }
+  .audio-btn:hover svg { stroke: var(--bg); }
+  .audio-btn svg { stroke: var(--ink); transition: stroke 0.3s var(--ease); }
+  .audio-btn .eq { display: none; }
+  .audio-btn.playing .play { display: none; }
+  .audio-btn.playing .eq { display: flex; align-items: flex-end; gap: 2px; height: 14px; }
+  .audio-btn .eq span {
+    width: 2px; background: currentColor; border-radius: 1px;
+    animation: eq 1s ease-in-out infinite;
+  }
+  .audio-btn .eq span:nth-child(1) { height: 60%; animation-delay: -0.4s; }
+  .audio-btn .eq span:nth-child(2) { height: 100%; animation-delay: -0.2s; }
+  .audio-btn .eq span:nth-child(3) { height: 75%; animation-delay: -0.6s; }
+  .audio-btn .eq span:nth-child(4) { height: 50%; animation-delay: 0s; }
+  @keyframes eq { 0%,100% { transform: scaleY(0.4); } 50% { transform: scaleY(1); } }
+  @media (prefers-reduced-motion: reduce) {
+    .audio-btn .eq span { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<audio id="bgm" src="bgm.m4a" loop preload="auto"></audio>
+<button class="audio-btn" id="audioBtn" aria-label="播放/暂停背景音乐">
+  <svg class="play" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 5l12 7-12 7V5z" fill="currentColor" stroke="none"/></svg>
+  <div class="eq"><span></span><span></span><span></span><span></span></div>
+</button>
+
+<nav class="nav" id="nav">
+  <a href="#top" class="mark">
+    <span class="cn">拾光集</span>
+    <span class="dot">·</span>
+    <em style="font-family:var(--serif);font-style:italic;font-weight:300;font-size:14px;color:var(--ink-3);">leon</em>
+  </a>
+  <div class="nav-links">
+    <a href="#s1"><span class="num">i.</span>广州</a>
+    <a href="#s2"><span class="num">ii.</span>故乡</a>
+    <a href="#s3"><span class="num">iii.</span>长夜</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero" id="top">
+  <div class="hero-text">
+    <div class="hero-eyebrow">A photography journal · 2024–2026</div>
+    <h1 class="hero-title">
+      <span class="hero-line">我的心是旷野的鸟，</span>
+      <span class="hero-line">在你的眼睛里，</span>
+      <span class="hero-line">找到了它的天空。</span>
+    </h1>
+    <p class="hero-sub">三组照片，三种心情。故乡的旧日光，广州街头的雨，以及那些没有名字的长夜。这里没有解说，只有图像本身。</p>
+    <div class="hero-meta">
+      <div><span class="k">Series</span><span class="v">三卷</span></div>
+      <div><span class="k">Frames</span><span class="v">30</span></div>
+      <div><span class="k">Camera</span><span class="v">Fujifilm</span></div>
+    </div>
+  </div>
+  <div class="hero-image">
+    <img src="广州/雨天2.jpg" alt="广州·雨中倒影" loading="eager">
+    <div class="caption">
+      Gathering Light
+      <span class="cn">拾光</span>
+    </div>
+  </div>
+</section>
+
+<!-- Series 1: 广州 -->
+<section class="series" id="s1">
+  <div class="series-head reveal">
+    <div class="series-num">i.</div>
+    <div class="series-title-block">
+      <div class="series-label">Volume One</div>
+      <h2 class="series-title">广州</h2>
+      <p class="series-desc">南方城市的湿气、霓虹与突如其来的雨。镜头游走在街头，记录一种被水汽稀释过的都市感。</p>
+      <div class="series-count">八帧 · 2024–2026</div>
+    </div>
+  </div>
+  <div class="grid two reveal" data-series="广州">
+    <figure class="frame" data-src="广州/DSCF6567.jpg"><img src="广州/DSCF6567.jpg" loading="lazy" alt="广州 01"><span class="tag">广州 · 01</span></figure>
+    <figure class="frame" data-src="广州/DSCF9132.jpg"><img src="广州/DSCF9132.jpg" loading="lazy" alt="广州 02"><span class="tag">广州 · 02</span></figure>
+    <figure class="frame" data-src="广州/P1001104.jpg"><img src="广州/P1001104.jpg" loading="lazy" alt="广州 03"><span class="tag">广州 · 03</span></figure>
+    <figure class="frame" data-src="广州/雨天2.jpg"><img src="广州/雨天2.jpg" loading="lazy" alt="广州 04"><span class="tag">广州 · 04</span></figure>
+    <figure class="frame" data-src="广州/mmexport1789141489344.jpg"><img src="广州/mmexport1789141489344.jpg" loading="lazy" alt="广州 05"><span class="tag">广州 · 05</span></figure>
+    <figure class="frame" data-src="广州/mmexport1789141495407.jpg"><img src="广州/mmexport1789141495407.jpg" loading="lazy" alt="广州 06"><span class="tag">广州 · 06</span></figure>
+    <figure class="frame" data-src="广州/mmexport1789141537426.jpg"><img src="广州/mmexport1789141537426.jpg" loading="lazy" alt="广州 07"><span class="tag">广州 · 07</span></figure>
+    <figure class="frame" data-src="广州/mmexport1789141829084.jpg"><img src="广州/mmexport1789141829084.jpg" loading="lazy" alt="广州 08"><span class="tag">广州 · 08</span></figure>
+  </div>
+</section>
+
+<!-- Series 2: 故乡 -->
+<section class="series" id="s2">
+  <div class="series-head reveal">
+    <div class="series-num">ii.</div>
+    <div class="series-title-block">
+      <div class="series-label">Volume Two</div>
+      <h2 class="series-title">故乡</h2>
+      <p class="series-desc">关于一个回不去也离不开的地方。老墙、旧光、被时间磨软的轮廓——按下快门时，相机成了记忆的代理。</p>
+      <div class="series-count">十帧 · 2024–2026</div>
+    </div>
+  </div>
+  <div class="grid reveal" data-series="故乡">
+    <figure class="frame" data-src="故乡/123.jpg"><img src="故乡/123.jpg" loading="lazy" alt="故乡 01"><span class="tag">故乡 · 01</span></figure>
+    <figure class="frame" data-src="故乡/20210705_210023.jpg"><img src="故乡/20210705_210023.jpg" loading="lazy" alt="故乡 02"><span class="tag">故乡 · 02</span></figure>
+    <figure class="frame" data-src="故乡/DSCF0525.jpg"><img src="故乡/DSCF0525.jpg" loading="lazy" alt="故乡 03"><span class="tag">故乡 · 03</span></figure>
+    <figure class="frame" data-src="故乡/DSCF0809.jpg"><img src="故乡/DSCF0809.jpg" loading="lazy" alt="故乡 04"><span class="tag">故乡 · 04</span></figure>
+    <figure class="frame" data-src="故乡/DSCF7100.jpg"><img src="故乡/DSCF7100.jpg" loading="lazy" alt="故乡 05"><span class="tag">故乡 · 05</span></figure>
+    <figure class="frame" data-src="故乡/DSCF7486.jpg"><img src="故乡/DSCF7486.jpg" loading="lazy" alt="故乡 06"><span class="tag">故乡 · 06</span></figure>
+    <figure class="frame" data-src="故乡/DSCF7497.jpg"><img src="故乡/DSCF7497.jpg" loading="lazy" alt="故乡 07"><span class="tag">故乡 · 07</span></figure>
+    <figure class="frame" data-src="故乡/DSCF7648.jpg"><img src="故乡/DSCF7648.jpg" loading="lazy" alt="故乡 08"><span class="tag">故乡 · 08</span></figure>
+    <figure class="frame" data-src="故乡/DSCF7845.jpg"><img src="故乡/DSCF7845.jpg" loading="lazy" alt="故乡 09"><span class="tag">故乡 · 09</span></figure>
+    <figure class="frame" data-src="故乡/DSCF8200.jpg"><img src="故乡/DSCF8200.jpg" loading="lazy" alt="故乡 10"><span class="tag">故乡 · 10</span></figure>
+  </div>
+</section>
+
+<!-- Series 3: 长夜 -->
+<section class="series" id="s3">
+  <div class="series-head reveal">
+    <div class="series-num">iii.</div>
+    <div class="series-title-block">
+      <div class="series-label">Volume Three</div>
+      <h2 class="series-title">长夜</h2>
+      <p class="series-desc">夜晚不只是黑色的。它有蓝调时刻的呼吸，有路灯下的金属反光，有窗外那盏不灭的灯。这组照片献给所有未眠的人。</p>
+      <div class="series-count">十二帧 · 2024</div>
+    </div>
+  </div>
+  <div class="grid reveal" data-series="长夜">
+    <figure class="frame" data-src="长夜/DSC_8615(1).jpg"><img src="长夜/DSC_8615(1).jpg" loading="lazy" alt="长夜 01"><span class="tag">长夜 · 01</span></figure>
+    <figure class="frame" data-src="长夜/DSCF5995(1).jpg"><img src="长夜/DSCF5995(1).jpg" loading="lazy" alt="长夜 02"><span class="tag">长夜 · 02</span></figure>
+    <figure class="frame" data-src="长夜/DSCF6058(1).jpg"><img src="长夜/DSCF6058(1).jpg" loading="lazy" alt="长夜 03"><span class="tag">长夜 · 03</span></figure>
+    <figure class="frame" data-src="长夜/DSCF6134(1).jpg"><img src="长夜/DSCF6134(1).jpg" loading="lazy" alt="长夜 04"><span class="tag">长夜 · 04</span></figure>
+    <figure class="frame" data-src="长夜/DSCF6156(1).jpg"><img src="长夜/DSCF6156(1).jpg" loading="lazy" alt="长夜 05"><span class="tag">长夜 · 05</span></figure>
+    <figure class="frame" data-src="长夜/DSCF6319(1).jpg"><img src="长夜/DSCF6319(1).jpg" loading="lazy" alt="长夜 06"><span class="tag">长夜 · 06</span></figure>
+    <figure class="frame" data-src="长夜/DSCF6539(1).jpg"><img src="长夜/DSCF6539(1).jpg" loading="lazy" alt="长夜 07"><span class="tag">长夜 · 07</span></figure>
+    <figure class="frame" data-src="长夜/DSCF6596(1).jpg"><img src="长夜/DSCF6596(1).jpg" loading="lazy" alt="长夜 08"><span class="tag">长夜 · 08</span></figure>
+    <figure class="frame" data-src="长夜/DSCF6759(1).jpg"><img src="长夜/DSCF6759(1).jpg" loading="lazy" alt="长夜 09"><span class="tag">长夜 · 09</span></figure>
+    <figure class="frame" data-src="长夜/DSCF7030(1).jpg"><img src="长夜/DSCF7030(1).jpg" loading="lazy" alt="长夜 10"><span class="tag">长夜 · 10</span></figure>
+    <figure class="frame" data-src="长夜/DSCF8200(1).jpg"><img src="长夜/DSCF8200(1).jpg" loading="lazy" alt="长夜 11"><span class="tag">长夜 · 11</span></figure>
+    <figure class="frame" data-src="长夜/DSCF8374(1).jpg"><img src="长夜/DSCF8374(1).jpg" loading="lazy" alt="长夜 12"><span class="tag">长夜 · 12</span></figure>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-mark">拾光集 <em>leon</em></div>
+  <div class="footer-meta">
+    <span class="line">摄影 · Leon</span>
+    <span class="line muted">Made with light, time, and silence.</span>
+    <span class="line muted">© 2026 · 所有图像版权归原作者所有</span>
+  </div>
+</footer>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <button class="lb-close" id="lbClose" aria-label="关闭">关闭 · ESC</button>
+  <button class="lb-nav lb-prev" id="lbPrev" aria-label="上一张">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <div class="lb-stage">
+    <img id="lbImg" src="" alt="">
+  </div>
+  <button class="lb-nav lb-next" id="lbNext" aria-label="下一张">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <div class="lb-counter"><span class="cur" id="lbCur">1</span> / <span id="lbTotal">1</span></div>
+</div>
+
+<script>
+(function(){
+  // Nav scroll state
+  const nav = document.getElementById('nav');
+  const onScroll = () => {
+    if (window.scrollY > 20) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+  };
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // Reveal observer
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reveals = document.querySelectorAll('.reveal');
+  if (reduced) {
+    reveals.forEach(el => el.classList.add('in'));
+  } else {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -60px 0px' });
+    reveals.forEach(el => io.observe(el));
+  }
+
+  // Lightbox
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lbImg');
+  const lbCur = document.getElementById('lbCur');
+  const lbTotal = document.getElementById('lbTotal');
+  const lbClose = document.getElementById('lbClose');
+  const lbPrev = document.getElementById('lbPrev');
+  const lbNext = document.getElementById('lbNext');
+
+  // Collect all frames in document order across all series
+  const allFrames = Array.from(document.querySelectorAll('.frame'));
+  const allSrcs = allFrames.map(f => f.dataset.src);
+  let idx = 0;
+
+  lbTotal.textContent = allSrcs.length;
+
+  function show(i) {
+    idx = (i + allSrcs.length) % allSrcs.length;
+    lbImg.classList.add('swap');
+    setTimeout(() => {
+      lbImg.src = allSrcs[idx];
+      lbCur.textContent = idx + 1;
+      lbImg.classList.remove('swap');
+    }, 180);
+  }
+
+  function open(i) {
+    idx = i;
+    lbImg.src = allSrcs[idx];
+    lbCur.textContent = idx + 1;
+    lb.classList.add('open');
+    lb.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  function close() {
+    lb.classList.remove('open');
+    lb.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  allFrames.forEach((f, i) => {
+    f.addEventListener('click', () => open(i));
+  });
+
+  lbClose.addEventListener('click', close);
+  lbPrev.addEventListener('click', (e) => { e.stopPropagation(); show(idx - 1); });
+  lbNext.addEventListener('click', (e) => { e.stopPropagation(); show(idx + 1); });
+
+  lb.addEventListener('click', (e) => {
+    if (e.target === lb || e.target.classList.contains('lb-stage')) close();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape') close();
+    if (e.key === 'ArrowLeft') show(idx - 1);
+    if (e.key === 'ArrowRight') show(idx + 1);
+  });
+
+  // Touch swipe
+  let touchStartX = 0;
+  lb.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  lb.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) show(dx > 0 ? idx - 1 : idx + 1);
+  }, { passive: true });
+
+  // ---------- Background music ----------
+  // 浏览器禁止无交互自动播放，需等用户首次与页面交互后再开始
+  const bgm = document.getElementById('bgm');
+  const audioBtn = document.getElementById('audioBtn');
+  let started = false;
+
+  function playBgm() {
+    const p = bgm.play();
+    if (p && typeof p.then === 'function') {
+      p.then(() => {
+        audioBtn.classList.add('playing');
+        started = true;
+      }).catch(() => { /* 仍被阻止，等下一次交互 */ });
+    }
+  }
+
+  function toggleBgm() {
+    if (bgm.paused) {
+      playBgm();
+    } else {
+      bgm.pause();
+      audioBtn.classList.remove('playing');
+    }
+  }
+  audioBtn.addEventListener('click', toggleBgm);
+
+  // 首次任意交互（点击/滚动/按键）后尝试自动播放
+  function tryAutoplay() {
+    if (started) { removeListeners(); return; }
+    playBgm();
+  }
+  function removeListeners() {
+    window.removeEventListener('scroll', tryAutoplay);
+    document.removeEventListener('click', tryAutoplay);
+    document.removeEventListener('keydown', tryAutoplay);
+    window.removeEventListener('touchstart', tryAutoplay);
+  }
+  window.addEventListener('scroll', tryAutoplay, { passive: true, once: false });
+  document.addEventListener('click', tryAutoplay, { once: false });
+  document.addEventListener('keydown', tryAutoplay, { once: false });
+  window.addEventListener('touchstart', tryAutoplay, { passive: true, once: false });
+  bgm.addEventListener('play', removeListeners);
+})();
+</script>
+</body>
+</html>
