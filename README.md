@@ -20,7 +20,7 @@
 
 站点托管于 GitHub Pages，仓库内即站点根目录。访问地址：
 
-https://shengliao7-coder.github.io/photography/
+https://dreamer-leon.github.io/photography/
 
 > 仓库中的照片为**网页展示用压缩版**（长边 2048px、质量 82），
 > 原始大图保存在本地，未上传。
