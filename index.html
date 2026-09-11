@@ -454,11 +454,31 @@
   }
 
   /* ---------- Audio toggle ---------- */
-  .audio-btn {
+  .audio-wrap {
     position: fixed;
     bottom: 28px;
     left: 28px;
     z-index: 60;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  /* 浏览器禁止无交互自动播放，所以先提示用户点一下。
+     一旦开始播放就移除 .hint，提示自然淡出。 */
+  .audio-hint {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--ink-3);
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+    pointer-events: none;
+  }
+  .audio-wrap.hint .audio-hint { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .audio-hint { transition: none; } }
+  .audio-btn {
+    position: relative;
     width: 42px; height: 42px;
     border-radius: 50%;
     border: 1px solid var(--hair-strong);
@@ -494,10 +514,13 @@
 <body>
 
 <audio id="bgm" src="bgm.m4a" loop preload="none"></audio>
-<button class="audio-btn" id="audioBtn" aria-label="播放/暂停背景音乐">
-  <svg class="play" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 5l12 7-12 7V5z" fill="currentColor" stroke="none"/></svg>
-  <div class="eq"><span></span><span></span><span></span><span></span></div>
-</button>
+<div class="audio-wrap hint" id="audioWrap">
+  <button class="audio-btn" id="audioBtn" aria-label="播放/暂停背景音乐">
+    <svg class="play" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 5l12 7-12 7V5z" fill="currentColor" stroke="none"/></svg>
+    <div class="eq"><span></span><span></span><span></span><span></span></div>
+  </button>
+  <span class="audio-hint">点击开启音乐</span>
+</div>
 
 <nav class="nav" id="nav">
   <a href="#top" class="mark">
@@ -736,6 +759,7 @@
   // 浏览器禁止无交互自动播放，需等用户首次与页面交互后再开始
   const bgm = document.getElementById('bgm');
   const audioBtn = document.getElementById('audioBtn');
+  const audioWrap = document.getElementById('audioWrap');
   let started = false;
 
   function playBgm() {
@@ -743,8 +767,9 @@
     if (p && typeof p.then === 'function') {
       p.then(() => {
         audioBtn.classList.add('playing');
+        audioWrap.classList.remove('hint');   // 播起来了就把提示收掉
         started = true;
-      }).catch(() => { /* 仍被阻止，等下一次交互 */ });
+      }).catch(() => { /* 仍被阻止，保留提示，等下一次交互 */ });
     }
   }
 
@@ -758,7 +783,9 @@
   }
   audioBtn.addEventListener('click', toggleBgm);
 
-  // 首次任意交互（点击/滚动/按键）后尝试自动播放
+  // 首次交互后尝试自动播放。
+  // 注意：浏览器只承认「点击 / 轻触 / 按键」为用户激活，
+  // 滚动（scroll）在 Chrome 里不算，所以真正能解锁播放的是点击类事件。
   function tryAutoplay() {
     if (started) { removeListeners(); return; }
     playBgm();
