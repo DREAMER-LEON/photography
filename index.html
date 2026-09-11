@@ -464,7 +464,8 @@
     gap: 12px;
   }
   /* 浏览器禁止无交互自动播放，所以先提示用户点一下。
-     一旦开始播放就移除 .hint，提示自然淡出。 */
+     一旦开始播放就移除 .hint，提示自然淡出。
+     闪动放在内层、淡出放在外层，两层各管一件事，避免动画与过渡互相覆盖。 */
   .audio-hint {
     font-size: 11px;
     letter-spacing: 0.14em;
@@ -472,11 +473,20 @@
     white-space: nowrap;
     opacity: 0;
     transform: translateX(-6px);
-    transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+    transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
     pointer-events: none;
   }
   .audio-wrap.hint .audio-hint { opacity: 1; transform: none; }
-  @media (prefers-reduced-motion: reduce) { .audio-hint { transition: none; } }
+  .audio-hint-inner { display: inline-block; }
+  .audio-wrap.hint .audio-hint-inner { animation: breathe 3.4s ease-in-out infinite; }
+  @keyframes breathe {
+    0%, 100% { opacity: 0.4; }
+    50%      { opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .audio-hint { transition: none; }
+    .audio-wrap.hint .audio-hint-inner { animation: none; opacity: 0.75; }
+  }
   .audio-btn {
     position: relative;
     width: 42px; height: 42px;
@@ -519,7 +529,7 @@
     <svg class="play" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 5l12 7-12 7V5z" fill="currentColor" stroke="none"/></svg>
     <div class="eq"><span></span><span></span><span></span><span></span></div>
   </button>
-  <span class="audio-hint">点击开启音乐</span>
+  <span class="audio-hint"><span class="audio-hint-inner">点击开启音乐</span></span>
 </div>
 
 <nav class="nav" id="nav">
