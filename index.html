@@ -276,7 +276,9 @@
     height: auto;
     transition: transform 1.2s var(--ease), filter 0.6s var(--ease);
   }
-  .frame:hover img { transform: scale(1.025); filter: brightness(0.97); }
+  @media (hover: hover) {
+    .frame:hover img { transform: scale(1.025); filter: brightness(0.97); }
+  }
   .frame::after {
     content: '';
     position: absolute;
@@ -285,7 +287,9 @@
     transition: border-color 0.4s var(--ease);
     pointer-events: none;
   }
-  .frame:hover::after { border-color: rgba(26,26,31,0.08); }
+  @media (hover: hover) {
+    .frame:hover::after { border-color: rgba(26,26,31,0.08); }
+  }
   .frame .tag {
     position: absolute;
     left: 14px; bottom: 14px;
@@ -303,7 +307,9 @@
     transform: translateY(6px);
     transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
   }
-  .frame:hover .tag { opacity: 1; transform: translateY(0); }
+  @media (hover: hover) {
+    .frame:hover .tag { opacity: 1; transform: translateY(0); }
+  }
 
   /* ---------- Reveal on scroll ---------- */
   .reveal {
@@ -380,8 +386,16 @@
     justify-content: center;
     transition: background 0.3s var(--ease), border-color 0.3s var(--ease);
   }
-  .lb-nav:hover { background: var(--ink); border-color: var(--ink); }
-  .lb-nav:hover svg { stroke: var(--bg); }
+  /* 同样的问题：箭头路径写的是 stroke="currentColor"，
+     只改背景不改 color 会让箭头与底色同为深色而消失。
+     所以这里必须显式给 color。 */
+  @media (hover: hover) {
+    .lb-nav:hover {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: var(--bg);
+    }
+  }
   .lb-nav svg { stroke: var(--ink); transition: stroke 0.3s var(--ease); }
   .lb-prev { left: 32px; }
   .lb-next { right: 32px; }
@@ -506,8 +520,19 @@
     justify-content: center;
     transition: background 0.3s var(--ease), border-color 0.3s var(--ease);
   }
-  .audio-btn:hover { background: var(--ink); border-color: var(--ink); }
-  .audio-btn:hover svg { stroke: var(--bg); }
+  /* 悬停反色：深色底上必须把 color 一起切成浅色。
+     播放三角用 fill=currentColor、跳动柱用 background=currentColor，
+     只改背景不改 color，图标就和底色一样深，视觉上只剩一个黑圆。
+     （原先那条 :hover svg { stroke } 是无效的——三角上写了 stroke="none"）
+     另外必须包进 @media (hover: hover)：移动端点击后 :hover 会「粘住」不释放，
+     按钮会一直停在深色状态。 */
+  @media (hover: hover) {
+    .audio-btn:hover {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: var(--bg);
+    }
+  }
   .audio-btn svg { stroke: var(--ink); transition: stroke 0.3s var(--ease); }
   .audio-btn .eq { display: none; }
   .audio-btn.playing .play { display: none; }
