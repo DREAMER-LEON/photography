@@ -794,37 +794,42 @@
   }, { passive: true });
 
   // ---------- Background music ----------
-  // 浏览器禁止无交互自动播放，需等用户首次与页面交互后再开始
+  // 浏览器禁止无交互自动播放，需等用户首次与页面交互后再开始。
+  // ⚠️ 一次点击会先后触发 touchstart、click 以及冒泡到 document 的多个监听。
+  //    若不设约束，按钮会「先被自动播放点火、再被按钮自己判定为正在播放而暂停」，
+  //    净效果就是一按一停等于没反应 —— 表现为「要点两下才响」。
+  //    所以：① 按钮自己 stopPropagation ② 自动播放跳过按钮区域 ③ playBgm 做重入保护。
   const bgm = document.getElementById('bgm');
   const audioBtn = document.getElementById('audioBtn');
   const audioWrap = document.getElementById('audioWrap');
   let started = false;
-  let loaded = false;
-
-  // 移动端（尤其 iOS）在 preload="none" 下直接 play() 可能无声失败，因为媒体还没开始加载。
-  // 这里先在用户手势里把加载开起来，失败再延迟重试一次。
-  function ensureLoaded() {
-    if (loaded) return;
-    loaded = true;
-    try { bgm.load(); } catch (e) { /* 忽略 */ }
-  }
+  let playPending = false;
 
   function markPlaying() {
     audioBtn.classList.add('playing');
     audioWrap.classList.remove('hint');   // 播起来了就把提示收掉
     started = true;
+    removeListeners();
   }
 
+  // 唯一的播放入口，playPending 防止同一次点击里重复调用 play()
   function playBgm() {
-    ensureLoaded();
-    const p = bgm.play();
+    if (playPending || !bgm.paused) return;
+    playPending = true;
+    let p;
+    try { p = bgm.play(); } catch (err) { playPending = false; return; }
     if (p && typeof p.then === 'function') {
-      p.then(markPlaying).catch(() => {
-        // 移动端首次 play 常因尚未就绪而失败，稍后重试一次
-        setTimeout(() => {
-          bgm.play().then(markPlaying).catch(() => { /* 仍被阻止，保留提示 */ });
-        }, 320);
-      });
+      p.then(() => { playPending = false; markPlaying(); })
+       .catch(() => {
+         playPending = false;
+         // 部分移动端首次 play 会因尚未就绪而失败，稍后重试一次
+         setTimeout(() => {
+           if (bgm.paused && !started) bgm.play().then(markPlaying).catch(() => {});
+         }, 320);
+       });
+    } else {
+      playPending = false;
+      if (!bgm.paused) markPlaying();
     }
   }
 
@@ -836,12 +841,15 @@
       audioBtn.classList.remove('playing');
     }
   }
-  audioBtn.addEventListener('click', toggleBgm);
+
+  // 按钮自己处理点击，并阻止冒泡，避免又被 document 上的自动播放监听抓一次
+  audioBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleBgm(); });
 
   // 首次交互后尝试自动播放。
-  // 注意：浏览器只承认「点击 / 轻触 / 按键」为用户激活，
-  // 滚动（scroll）在 Chrome 里不算，所以真正能解锁播放的是点击类事件。
-  function tryAutoplay() {
+  // 浏览器只承认「点击 / 轻触 / 按键」为用户激活，滚动（scroll）在 Chrome 里不算。
+  function tryAutoplay(e) {
+    // 落在音乐按钮区域内就交给按钮自己处理，不要在这里抢着播
+    if (e && e.target && e.target.nodeType === 1 && audioWrap.contains(e.target)) return;
     if (started) { removeListeners(); return; }
     playBgm();
   }
