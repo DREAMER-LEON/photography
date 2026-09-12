@@ -771,15 +771,32 @@
   const audioBtn = document.getElementById('audioBtn');
   const audioWrap = document.getElementById('audioWrap');
   let started = false;
+  let loaded = false;
+
+  // 移动端（尤其 iOS）在 preload="none" 下直接 play() 可能无声失败，因为媒体还没开始加载。
+  // 这里先在用户手势里把加载开起来，失败再延迟重试一次。
+  function ensureLoaded() {
+    if (loaded) return;
+    loaded = true;
+    try { bgm.load(); } catch (e) { /* 忽略 */ }
+  }
+
+  function markPlaying() {
+    audioBtn.classList.add('playing');
+    audioWrap.classList.remove('hint');   // 播起来了就把提示收掉
+    started = true;
+  }
 
   function playBgm() {
+    ensureLoaded();
     const p = bgm.play();
     if (p && typeof p.then === 'function') {
-      p.then(() => {
-        audioBtn.classList.add('playing');
-        audioWrap.classList.remove('hint');   // 播起来了就把提示收掉
-        started = true;
-      }).catch(() => { /* 仍被阻止，保留提示，等下一次交互 */ });
+      p.then(markPlaying).catch(() => {
+        // 移动端首次 play 常因尚未就绪而失败，稍后重试一次
+        setTimeout(() => {
+          bgm.play().then(markPlaying).catch(() => { /* 仍被阻止，保留提示 */ });
+        }, 320);
+      });
     }
   }
 
